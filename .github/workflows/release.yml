@@ -1,0 +1,65 @@
+# タグ v0.1.0 を push すると:
+#   1. exe をビルド（Windows）
+#   2. package/Tools~/ に exe を入れて VPM パッケージ zip を作る
+#   3. GitHub Release に zip を添付
+#   4. gh-pages ブランチの index.json に版を追加（= VCC に更新が出る）
+name: release
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build exe (self-contained folder)
+        working-directory: exe
+        run: >
+          dotnet publish -c Release -r win-x64 --self-contained true
+          -p:DebugType=none -p:DebugSymbols=false -o dist
+
+      - name: Read version
+        id: ver
+        shell: pwsh
+        run: |
+          $v = (Get-Content package/package.json | ConvertFrom-Json).version
+          echo "version=$v" >> $env:GITHUB_OUTPUT
+          echo "name=$((Get-Content package/package.json | ConvertFrom-Json).name)" >> $env:GITHUB_OUTPUT
+
+      - name: Assemble package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "package/Tools~/app" | Out-Null
+          Copy-Item exe/dist/* "package/Tools~/app/" -Recurse -Force
+          Remove-Item "package/Tools~/README.txt" -ErrorAction SilentlyContinue
+          $zip = "${{ steps.ver.outputs.name }}-${{ steps.ver.outputs.version }}.zip"
+          Compress-Archive -Path package/* -DestinationPath $zip -Force
+          echo "ZIP=$zip" >> $env:GITHUB_ENV
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP }}
+          tag_name: ${{ github.ref_name }}
+
+      - name: Update index.json on gh-pages
+        shell: pwsh
+        run: |
+          $url = "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/${{ env.ZIP }}"
+          git fetch origin gh-pages:gh-pages 2>$null; if ($LASTEXITCODE -ne 0) { git branch gh-pages }
+          git worktree add ../pages gh-pages
+          python tools/make_index.py package/package.json $url ../pages/index.json
+          Push-Location ../pages
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add index.json; git commit -m "index: ${{ steps.ver.outputs.name }} ${{ steps.ver.outputs.version }}"; git push origin gh-pages
+          Pop-Location
