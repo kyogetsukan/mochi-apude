@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kyogetsukan.BoothAutoUpdater
+namespace Kyogetsukan.MochiApude
 {
     /// <summary>
     /// 新しいファイルが見つかった時の確認ダイアログ。
@@ -17,7 +17,7 @@ namespace Kyogetsukan.BoothAutoUpdater
 
         public static void Open(List<BauImporter.Candidate> items, BauSettings settings)
         {
-            var w = GetWindow<BauConfirmWindow>(true, "BOOTH Auto Updater — 新しいファイル", true);
+            var w = GetWindow<BauConfirmWindow>(true, "もちアプデ — 新しいファイル", true);
             w._items = items;
             w._settings = settings;
             w.minSize = new Vector2(520, 260);

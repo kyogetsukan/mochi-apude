@@ -7,8 +7,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>BoothAutoUpdater</AssemblyName>
-    <RootNamespace>BoothAutoUpdater</RootNamespace>
+    <AssemblyName>MochiApude</AssemblyName>
+    <RootNamespace>MochiApude</RootNamespace>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <Version>0.2.0</Version>
   </PropertyGroup>

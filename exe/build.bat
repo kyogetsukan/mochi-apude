@@ -16,6 +16,6 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
-echo OK: %~dp0dist\BoothAutoUpdater.exe
+echo OK: %~dp0dist\MochiApude.exe
 echo Copy the ENTIRE dist folder contents into package\Tools~\app\
 pause

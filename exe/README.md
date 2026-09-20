@@ -1,4 +1,4 @@
-# BoothAutoUpdater（試作 0.2.0 / Windows）
+# MochiApude（試作 0.2.0 / Windows）
 
 購入済み・ギフト受取・無料配布の BOOTH 商品に新しいファイルが上がっていたら
 `Downloads\VRC_Packages\` に保存する、常駐しない小さな exe。
@@ -7,7 +7,7 @@ Unity 側の VPM パッケージから `--check` で呼ばれる想定（Unity �
 - 制作者側の作業は無し。BOOTH に今まで通りファイルを上げるだけ。
 - 購入判定は BOOTH に任せる。自分のライブラリに無いものは何も取れない。
 - ID・パスワードには触らない。ログインは内蔵 WebView2（Edge の中身）の BOOTH 画面で本人が一度だけ行い、
-  Cookie は `%LOCALAPPDATA%\BoothAutoUpdater\profile` に残る。
+  Cookie は `%LOCALAPPDATA%\MochiApude\profile` に残る。
 
 ## 必要なもの
 
@@ -17,18 +17,18 @@ Unity 側の VPM パッケージから `--check` で呼ばれる想定（Unity �
 
 ## ビルド
 
-`build.bat` を実行。`dist\BoothAutoUpdater.exe` ができる。
+`build.bat` を実行。`dist\MochiApude.exe` ができる。
 
 ## 使い方
 
 | コマンド | 動き |
 |---|---|
-| `BoothAutoUpdater.exe` | 設定ウィンドウ。商品 URL / 注文詳細 URL の登録、絞り込み、保存先、手動チェック |
-| `BoothAutoUpdater.exe --login` | BOOTH のログイン画面を開く（初回のみ） |
-| `BoothAutoUpdater.exe --check` | 登録商品を確認、新版を保存、結果 JSON を標準出力に出して終了 |
-| `BoothAutoUpdater.exe --add URL` | 商品を登録して終了 |
+| `MochiApude.exe` | 設定ウィンドウ。商品 URL / 注文詳細 URL の登録、絞り込み、保存先、手動チェック |
+| `MochiApude.exe --login` | BOOTH のログイン画面を開く（初回のみ） |
+| `MochiApude.exe --check` | 登録商品を確認、新版を保存、結果 JSON を標準出力に出して終了 |
+| `MochiApude.exe --add URL` | 商品を登録して終了 |
 
-登録データ: `%APPDATA%\BoothAutoUpdater\state.json`
+登録データ: `%APPDATA%\MochiApude\state.json`
 
 ### `--check` の出力例
 

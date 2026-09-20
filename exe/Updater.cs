@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 public record CheckError(string Item, string Error);
 public record Downloaded(string Item, string File, string Path);

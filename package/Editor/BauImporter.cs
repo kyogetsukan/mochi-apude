@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kyogetsukan.BoothAutoUpdater
+namespace Kyogetsukan.MochiApude
 {
     /// <summary>保存フォルダの zip / unitypackage を見つけて、このプロジェクトに取り込む</summary>
     public static class BauImporter
@@ -77,7 +77,7 @@ namespace Kyogetsukan.BoothAutoUpdater
                     owners[pkg] = c;
                 }
                 if (!owners.ContainsValue(c))
-                    Debug.LogWarning("[BOOTH Auto Updater] unitypackage が見つからないので見送り: " + c.fileName);
+                    Debug.LogWarning("[もちアプデ] unitypackage が見つからないので見送り: " + c.fileName);
             }
             s.Save();
             if (queue.Count == 0) return;
@@ -89,12 +89,12 @@ namespace Kyogetsukan.BoothAutoUpdater
             if (queue.Count == 0)
             {
                 AssetDatabase.Refresh();
-                Debug.Log("[BOOTH Auto Updater] 取り込み完了");
+                Debug.Log("[もちアプデ] 取り込み完了");
                 return;
             }
             var pkg = queue.Dequeue();
             var owner = owners[pkg];
-            Debug.Log("[BOOTH Auto Updater] 取り込み: " + Path.GetFileName(pkg) + "  ← " + owner.fileName);
+            Debug.Log("[もちアプデ] 取り込み: " + Path.GetFileName(pkg) + "  ← " + owner.fileName);
 
             AssetDatabase.ImportPackageCallback done = null;
             AssetDatabase.ImportPackageFailedCallback failed = null;
@@ -114,7 +114,7 @@ namespace Kyogetsukan.BoothAutoUpdater
                 AssetDatabase.importPackageFailed -= failed;
                 s.imported.RemoveAll(r => r.fileName == owner.fileName);
                 s.Save();
-                Debug.LogError("[BOOTH Auto Updater] 取り込み失敗: " + name + " — " + msg);
+                Debug.LogError("[もちアプデ] 取り込み失敗: " + name + " — " + msg);
                 ImportNext(queue, owners, s);
             };
             AssetDatabase.importPackageCompleted += done;
@@ -128,7 +128,7 @@ namespace Kyogetsukan.BoothAutoUpdater
             if (path.EndsWith(".unitypackage", StringComparison.OrdinalIgnoreCase))
                 return new[] { path };
 
-            var dest = Path.Combine(Path.GetFullPath("Temp"), "BoothAutoUpdater", Path.GetFileNameWithoutExtension(path));
+            var dest = Path.Combine(Path.GetFullPath("Temp"), "MochiApude", Path.GetFileNameWithoutExtension(path));
             try
             {
                 if (Directory.Exists(dest)) Directory.Delete(dest, true);
@@ -147,7 +147,7 @@ namespace Kyogetsukan.BoothAutoUpdater
             }
             catch (Exception e)
             {
-                Debug.LogError("[BOOTH Auto Updater] zip の展開に失敗: " + path + " — " + e.Message);
+                Debug.LogError("[もちアプデ] zip の展開に失敗: " + path + " — " + e.Message);
                 return Array.Empty<string>();
             }
         }

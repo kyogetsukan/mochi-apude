@@ -1,9 +1,9 @@
-# booth-auto-updater（開発・公開手順）
+# mochi-apude（開発・公開手順）
 
 利用者向けの説明は `package/README.md`。ここは作る側の手順。
 
 ```
-exe/        BoothAutoUpdater.exe のソース（C# / WinForms / WebView2）
+exe/        MochiApude.exe のソース（C# / WinForms / WebView2）
 package/    VPM パッケージ（Unity Editor 拡張 + Tools~/ に exe を同梱）
 tools/      index.json 生成スクリプト
 .github/    タグを打つと exe ビルド → zip → Release → gh-pages の index.json 更新
@@ -12,11 +12,11 @@ tools/      index.json 生成スクリプト
 ## 開発中の確認（夜空の PC）
 
 1. .NET SDK 8.0 を入れる（一回だけ）。`dotnet --list-sdks` に 8.0 が出れば済み。
-2. `exe\build.bat` をダブルクリック → `exe\dist\BoothAutoUpdater.exe`。
+2. `exe\build.bat` をダブルクリック → `exe\dist\MochiApude.exe`。
 3. その exe を `package\Tools~\` にコピー。
 4. 手元の Unity プロジェクトの `Packages\` に `package` フォルダをコピー（フォルダ名は何でもいい）。
    VCC を通さずローカルパッケージとして読み込まれる。
-5. Unity を開くと自動確認が走る。メニューは Tools → 境月館 → BOOTH Auto Updater。
+5. Unity を開くと自動確認が走る。メニューは Tools → 境月館 → もちアプデ。
 
 ## 公開の準備（一回だけ）
 
@@ -35,10 +35,10 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-Actions が exe をビルドし、`jp.kyogetsukan.booth-auto-updater-0.1.0.zip` を Release に置き、
+Actions が exe をビルドし、`jp.kyogetsukan.mochi-apude-0.1.0.zip` を Release に置き、
 `gh-pages` の `index.json` に版を足す。数分後には VCC 側に出る。
 
-版を上げる時は `package/package.json` の `version` と `exe/BoothAutoUpdater.csproj` の `Version` を揃えてからタグを打つ。
+版を上げる時は `package/package.json` の `version` と `exe/MochiApude.csproj` の `Version` を揃えてからタグを打つ。
 
 ## BOOTH の商品ページ（無料）
 

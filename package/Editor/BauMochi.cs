@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kyogetsukan.BoothAutoUpdater
+namespace Kyogetsukan.MochiApude
 {
     /// <summary>
     /// もちふぃった～専用の簡易版。商品は固定、ライブラリ走査なし。

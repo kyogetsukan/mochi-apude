@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 public class NotLoggedInException : Exception
 {

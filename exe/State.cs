@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 public class FileEntry
 {
@@ -51,10 +51,10 @@ public class AppState
     static readonly JsonSerializerOptions Opts = new() { WriteIndented = true };
 
     public static string Dir =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BoothAutoUpdater");
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MochiApude");
     public static string FilePath => Path.Combine(Dir, "state.json");
     public static string ProfileDir => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BoothAutoUpdater", "profile");
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MochiApude", "profile");
 
     public static AppState Load()
     {

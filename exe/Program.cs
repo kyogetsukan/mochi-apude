@@ -1,14 +1,14 @@
 using System.Text;
 using System.Text.Json;
 
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 /// <summary>
 /// 起動方法:
-///   BoothAutoUpdater.exe            設定ウィンドウ（商品の登録・削除、ログイン、手動チェック）
-///   BoothAutoUpdater.exe --check    登録商品を確認し新版を保存。結果 JSON を stdout に出して終了（Unity から呼ぶ）
-///   BoothAutoUpdater.exe --login    BOOTH のログイン画面を開く（初回のみ）
-///   BoothAutoUpdater.exe --add URL  商品 URL / 注文詳細 URL を登録して終了
+///   MochiApude.exe            設定ウィンドウ（商品の登録・削除、ログイン、手動チェック）
+///   MochiApude.exe --check    登録商品を確認し新版を保存。結果 JSON を stdout に出して終了（Unity から呼ぶ）
+///   MochiApude.exe --login    BOOTH のログイン画面を開く（初回のみ）
+///   MochiApude.exe --add URL  商品 URL / 注文詳細 URL を登録して終了
 /// </summary>
 static class Program
 {

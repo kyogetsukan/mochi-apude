@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 public record Downloadable(string? ItemId, string? Title, string Id, string Href, string Name);
 

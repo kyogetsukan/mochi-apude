@@ -7,13 +7,13 @@ using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kyogetsukan.BoothAutoUpdater
+namespace Kyogetsukan.MochiApude
 {
-    /// <summary>exe（BoothAutoUpdater.exe）の呼び出しと結果の受け取り</summary>
+    /// <summary>exe（MochiApude.exe）の呼び出しと結果の受け取り</summary>
     public static class BauExe
     {
-        public const string PackageName = "jp.kyogetsukan.booth-auto-updater";
-        const string ExeName = "BoothAutoUpdater.exe";
+        public const string PackageName = "jp.kyogetsukan.mochi-apude";
+        const string ExeName = "MochiApude.exe";
 
         /// <summary>パッケージに同梱されている exe 一式の入ったフォルダ（Tools~/app/）</summary>
         public static string BundledDir
@@ -26,16 +26,16 @@ namespace Kyogetsukan.BoothAutoUpdater
             }
         }
 
-        /// <summary>同梱 exe（Tools~/app/BoothAutoUpdater.exe）</summary>
+        /// <summary>同梱 exe（Tools~/app/MochiApude.exe）</summary>
         public static string BundledExePath => Path.Combine(BundledDir, ExeName);
 
         /// <summary>
-        /// 実際に起動する exe。Tools~ から直接は起動せず、%LOCALAPPDATA%\BoothAutoUpdater\bin\ に
+        /// 実際に起動する exe。Tools~ から直接は起動せず、%LOCALAPPDATA%\MochiApude\bin\ に
         /// フォルダごとコピーしてそこから動かす。パスの「~」を .NET のホストが誤解する事故と、
         /// PackageCache 側の読み取り専用・差し替えの影響を避けるため。
         /// </summary>
         public static string DeployDir =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BoothAutoUpdater", "bin");
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MochiApude", "bin");
 
         public static string ExePath => Path.Combine(DeployDir, ExeName);
 
@@ -54,7 +54,7 @@ namespace Kyogetsukan.BoothAutoUpdater
                 if (!File.Exists(srcExe))
                 {
                     if (File.Exists(dstExe)) return true; // 以前コピーしたものが残っていればそれで動かす
-                    error = "BoothAutoUpdater.exe が見つからない: " + srcExe;
+                    error = "MochiApude.exe が見つからない: " + srcExe;
                     return false;
                 }
                 var s = new FileInfo(srcExe);
@@ -71,7 +71,7 @@ namespace Kyogetsukan.BoothAutoUpdater
                         File.Copy(f, to, true);
                     }
                     File.SetLastWriteTimeUtc(dstExe, s.LastWriteTimeUtc);
-                    UnityEngine.Debug.Log("[BOOTH Auto Updater] exe 一式を配置: " + DeployDir);
+                    UnityEngine.Debug.Log("[もちアプデ] exe 一式を配置: " + DeployDir);
                 }
                 return true;
             }
@@ -149,14 +149,14 @@ namespace Kyogetsukan.BoothAutoUpdater
                 }
                 catch (Exception e) { err = e.Message; }
                 BauMainThread.Enqueue(() => onDone?.Invoke(code, out_, err));
-            }) { IsBackground = true, Name = "BoothAutoUpdater" };
+            }) { IsBackground = true, Name = "MochiApude" };
             thread.Start();
         }
 
         /// <summary>ウィンドウを出す系（--login / 設定画面）は待たずに起動する</summary>
         public static void Launch(string args)
         {
-            if (!EnsureExeDeployed(out var deployError)) { EditorUtility.DisplayDialog("BOOTH Auto Updater", deployError, "OK"); return; }
+            if (!EnsureExeDeployed(out var deployError)) { EditorUtility.DisplayDialog("もちアプデ", deployError, "OK"); return; }
             Process.Start(new ProcessStartInfo { FileName = ExePath, Arguments = args, UseShellExecute = true });
         }
 

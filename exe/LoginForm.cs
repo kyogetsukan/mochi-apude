@@ -1,6 +1,6 @@
 using Microsoft.Web.WebView2.WinForms;
 
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 /// <summary>
 /// BOOTH のログイン画面をそのまま表示する。入力は全部 BOOTH のページ上で行われ、

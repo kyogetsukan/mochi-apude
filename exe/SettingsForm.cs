@@ -1,4 +1,4 @@
-namespace BoothAutoUpdater;
+namespace MochiApude;
 
 /// <summary>商品の登録・削除、保存先、手動チェック。</summary>
 public class SettingsForm : Form
@@ -23,7 +23,7 @@ public class SettingsForm : Form
 
     public SettingsForm()
     {
-        Text = "BOOTH Auto Updater";
+        Text = "もちアプデ";
         Size = new Size(820, 620);
         MinimumSize = new Size(640, 480);
         StartPosition = FormStartPosition.CenterScreen;
