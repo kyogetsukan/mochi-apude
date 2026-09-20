@@ -37,6 +37,22 @@
           "vpmDependencies": {},
           "legacyFolders": {},
           "legacyFiles": {}
+        },
+        "0.1.3": {
+          "name": "jp.kyogetsukan.mochi-apude",
+          "displayName": "kyogetsukan mochiapude",
+          "version": "0.1.3",
+          "unity": "2022.3",
+          "description": "購入済みのもちふぃった～に新しい版が出ていれば、Unity から取得して取り込みます。商品ページ→注文詳細だけを見るので速い。ギフト受取品は対象外。ログイン情報には触れません。",
+          "author": {
+            "name": "境月館",
+            "url": "https://kyogetsukan.booth.pm/"
+          },
+          "url": "https://github.com/kyogetsukan/mochi-apude/releases/download/v0.1.3/jp.kyogetsukan.mochi-apude-0.1.3.zip",
+          "license": "MIT",
+          "vpmDependencies": {},
+          "legacyFolders": {},
+          "legacyFiles": {}
         }
       }
     }
