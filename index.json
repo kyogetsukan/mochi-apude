@@ -1,0 +1,28 @@
+{
+  "name": "境月館 VPM Repository",
+  "id": "jp.kyogetsukan.vpm",
+  "author": "境月館",
+  "url": "https://kyogetsukan.github.io/mochi-apude/index.json",
+  "packages": {
+    "jp.kyogetsukan.mochi-apude": {
+      "versions": {
+        "0.1.1": {
+          "name": "jp.kyogetsukan.mochi-apude",
+          "displayName": "【境月館】もちアプデ｜もちふぃった～の更新をUnityから取り込む",
+          "version": "0.1.1",
+          "unity": "2022.3",
+          "description": "購入済みのもちふぃった～に新しい版が出ていれば、Unity から取得して取り込みます。商品ページ→注文詳細だけを見るので速い。ギフト受取品は対象外。ログイン情報には触れません。",
+          "author": {
+            "name": "境月館",
+            "url": "https://kyogetsukan.booth.pm/"
+          },
+          "url": "https://github.com/kyogetsukan/mochi-apude/releases/download/v0.1.1/jp.kyogetsukan.mochi-apude-0.1.1.zip",
+          "license": "MIT",
+          "vpmDependencies": {},
+          "legacyFolders": {},
+          "legacyFiles": {}
+        }
+      }
+    }
+  }
+}
