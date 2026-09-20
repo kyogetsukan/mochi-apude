@@ -15,7 +15,10 @@ public static class BoothParser
     static readonly Regex ItemUrl = new(@"booth\.pm/(?:[a-z-]+/)?items/(\d+)", RegexOptions.IgnoreCase);
     static readonly Regex OrderUrl = new(@"accounts\.booth\.pm/orders/(\d+)", RegexOptions.IgnoreCase);
 
+    // 旧マークアップ: <div class="text-14">ファイル名</div>
     static readonly Regex NameRe = new(@"<div class=""text-14"">([^<]+)</div>");
+    // 新マークアップ(2026-): <div class="min-w-0 ... text-[#505c6b] ..."><b>ファイル名</b></div>
+    static readonly Regex NameReNew = new(@"text-\[#505c6b\][^""]*""><b>([^<]+)</b>");
     static readonly Regex ItemLinkRe = new(@"href=""https://booth\.pm/(?:[a-z-]+/)?items/(\d+)""");
     static readonly Regex TitleRe = new(@"<div class=""text-text-default font-bold text-16[^""]*"">([^<]+)</div>");
     static readonly Regex ButtonRe = new(@"class=""js-download-button""[^>]*data-href=""(https://booth\.pm/downloadables/(\d+))""");
@@ -27,6 +30,7 @@ public static class BoothParser
     {
         var marks = new List<(int idx, char kind, string value)>();
         foreach (Match m in NameRe.Matches(html)) marks.Add((m.Index, 'n', WebUtility.HtmlDecode(m.Groups[1].Value.Trim())));
+        foreach (Match m in NameReNew.Matches(html)) marks.Add((m.Index, 'n', WebUtility.HtmlDecode(m.Groups[1].Value.Trim())));
         foreach (Match m in ItemLinkRe.Matches(html)) marks.Add((m.Index, 'i', m.Groups[1].Value));
         foreach (Match m in TitleRe.Matches(html)) marks.Add((m.Index, 't', WebUtility.HtmlDecode(m.Groups[1].Value.Trim())));
         marks.Sort((a, b) => a.idx.CompareTo(b.idx));

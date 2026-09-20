@@ -65,8 +65,14 @@ public static class Updater
             Directory.CreateDirectory(state.Settings.DownloadDir);
             foreach (var f in files)
             {
-                // 単一商品モードは同名で上書き（重複を溜めない）。版が変わればファイル名が変わる。
                 var target = Path.Combine(state.Settings.DownloadDir, BoothParser.SafeFileName(f.Name));
+                // 同名ファイルが既にあれば落とし直さない（版が変わればファイル名が変わるので新規だけ落ちる）。
+                // もちふぃった～は 1GB 級なので、無駄な再ダウンロードを避ける。
+                if (File.Exists(target))
+                {
+                    result.Downloaded.Add(new Downloaded(page.Title ?? itemId, f.Name, target));
+                    continue;
+                }
                 await client.DownloadAsync(f.Href, target, ct);
                 result.Downloaded.Add(new Downloaded(page.Title ?? itemId, f.Name, target));
             }
@@ -160,7 +166,6 @@ public static class Updater
                         item.Files.RemoveAll(x => x.Id == f.Id);
                         item.Files.Add(f);
                     }
-                    // パターン外のファイルも「見た」ことにして、次回また新規扱いしない
                     foreach (var f in files.Where(f => !MatchesPattern(item, f) && !known.Contains(f.Id))) item.Files.Add(f);
                     item.LastDownloaded = DateTime.Now;
                 }
