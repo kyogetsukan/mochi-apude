@@ -1,14 +1,17 @@
 {
-  "name": "jp.kyogetsukan.mochi-apude.Editor",
-  "rootNamespace": "Kyogetsukan.MochiApude",
-  "references": [],
+  "name": "Kyogetsukan.MochiApude.Kyogetsubako.Editor",
+  "rootNamespace": "Kyogetsukan.MochiApude.Kyogetsubako",
+  "references": [
+    "jp.kyogetsukan.mochi-apude.Editor",
+    "Kyogetsukan.Kyogetsubako.Editor"
+  ],
   "includePlatforms": [ "Editor" ],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
   "autoReferenced": true,
-  "defineConstraints": [],
+  "defineConstraints": [ "KYOGETSUBAKO_PRESENT" ],
   "versionDefines": [
     { "name": "jp.kyogetsukan.kyogetsubako", "expression": "", "define": "KYOGETSUBAKO_PRESENT" }
   ],
