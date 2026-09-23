@@ -68,7 +68,11 @@ namespace Kyogetsukan.MochiApude
                 foreach (var e in r.Errors) Log("注意: " + e.Item + " — " + e.Error);
 
                 var s = BauSettings.Load();
+                // 保存フォルダは常に最新1版だけにする（古い版が残ると両方取り込む事故になる）
+                var removed = BauImporter.KeepOnlyLatest(FilePrefix, s);
+                foreach (var name in removed) Log("古い版を削除: " + name);
                 var found = BauImporter.FindByPrefix(FilePrefix, includeImported: false, s);
+                if (found.Count > 1) found = found.GetRange(0, 1); // 念のため最新1つに絞る（FindByPrefix は新しい順）
                 if (found.Count == 0) { Log("このプロジェクトに未取り込みの新しい版はありません。"); return; }
                 Log("取り込み対象: " + string.Join(", ", found.ConvertAll(f => f.fileName)));
                 if (s.confirmBeforeImport) BauConfirmWindow.Open(found, s);
@@ -79,7 +83,10 @@ namespace Kyogetsukan.MochiApude
         void Reimport()
         {
             var s = BauSettings.Load();
+            var removed = BauImporter.KeepOnlyLatest(FilePrefix, s);
+            foreach (var name in removed) Log("古い版を削除: " + name);
             var found = BauImporter.FindByPrefix(FilePrefix, includeImported: true, s);
+            if (found.Count > 1) found = found.GetRange(0, 1); // 入れ直すのは最新1つだけ
             if (found.Count == 0)
             {
                 Log("保存フォルダに " + FilePrefix + " のファイルがありません。先に「更新をチェックして取り込む」を実行してください。");
