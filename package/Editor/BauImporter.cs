@@ -55,6 +55,45 @@ namespace Kyogetsukan.MochiApude
             return list.OrderByDescending(c => c.modified).ToList();
         }
 
+        /// <summary>
+        /// 保存フォルダにある prefix 始まりの zip/unitypackage のうち、更新日時が最新の1つだけを残し、古い版は削除する。
+        /// 削除したファイルの取り込み済み・見送り記録も消す。戻り値は削除したファイル名。
+        /// 版が並ぶと「両方入れる」ことになりかねないので、常に最新1つに揃える。
+        /// </summary>
+        public static List<string> KeepOnlyLatest(string prefix, BauSettings s)
+        {
+            var removed = new List<string>();
+            if (!Directory.Exists(DownloadDir)) return removed;
+            var files = new List<FileInfo>();
+            foreach (var p in Directory.GetFiles(DownloadDir))
+            {
+                var ext = Path.GetExtension(p).ToLowerInvariant();
+                if (ext != ".zip" && ext != ".unitypackage") continue;
+                var fi = new FileInfo(p);
+                if (!fi.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) continue;
+                files.Add(fi);
+            }
+            if (files.Count <= 1) return removed;
+            var latest = files.OrderByDescending(f => f.LastWriteTime).First();
+            foreach (var fi in files)
+            {
+                if (fi.FullName == latest.FullName) continue;
+                try
+                {
+                    fi.Delete();
+                    s.imported.RemoveAll(r => r.fileName == fi.Name);
+                    s.skipped.Remove(fi.Name);
+                    removed.Add(fi.Name);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("[もちアプデ] 古い版を消せませんでした: " + fi.Name + " — " + e.Message);
+                }
+            }
+            if (removed.Count > 0) s.Save();
+            return removed;
+        }
+
         /// <summary>取り込み済み記録を消してから入れ直す（入れ直しボタン用）</summary>
         public static void Reimport(IEnumerable<Candidate> candidates, BauSettings s)
         {
