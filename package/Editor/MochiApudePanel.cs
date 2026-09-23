@@ -9,12 +9,13 @@ namespace Kyogetsukan.MochiApude
     /// </summary>
     public class MochiApudePanel
     {
-        const string ItemId = "7657840";
-        const string ItemUrl = "https://booth.pm/ja/items/7657840";
-        const string FilePrefix = "MochiFitter";
+        const string ItemId = BauProduct.ItemId;
+        const string ItemUrl = BauProduct.ItemUrl;
+        const string FilePrefix = BauProduct.FilePrefix;
 
         string _log = "";
         bool _busy;
+        bool _shownStartupResult;
 
         // 再描画の依頼先。ホスト（ウィンドウ / 箱）が差し替える。
         public System.Action Repaint = () => UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
@@ -32,6 +33,14 @@ namespace Kyogetsukan.MochiApude
                 return;
             }
 
+            // 実際の確認は Unity を開いた時に BauStartupCheck が済ませている。
+            // ここでは BOOTH にもう一度聞きに行かず、その結果を開いて最初の一回だけログに出すだけ。
+            if (!_shownStartupResult)
+            {
+                _shownStartupResult = true;
+                if (!string.IsNullOrEmpty(BauStartupCheck.LastMessage)) Log(BauStartupCheck.LastMessage);
+            }
+
             using (new EditorGUI.DisabledScope(_busy))
             {
                 if (GUILayout.Button("更新をチェックして取り込む", GUILayout.Height(30))) CheckAndImport();
@@ -44,6 +53,8 @@ namespace Kyogetsukan.MochiApude
                     if (GUILayout.Button("商品ページを開く")) Application.OpenURL(ItemUrl);
                     if (GUILayout.Button("保存フォルダ")) { System.IO.Directory.CreateDirectory(BauImporter.DownloadDir); EditorUtility.RevealInFinder(BauImporter.DownloadDir); }
                 }
+                EditorGUILayout.Space(4);
+                if (GUILayout.Button("old版をまとめて削除")) ClearOld();
             }
 
             if (_busy) EditorGUILayout.LabelField("処理中…", EditorStyles.miniLabel);
@@ -70,7 +81,7 @@ namespace Kyogetsukan.MochiApude
                 var s = BauSettings.Load();
                 // 保存フォルダは常に最新1版だけにする（古い版が残ると両方取り込む事故になる）
                 var removed = BauImporter.KeepOnlyLatest(FilePrefix, s);
-                foreach (var name in removed) Log("古い版を削除: " + name);
+                foreach (var name in removed) Log("古い版を old へ退避: " + name);
                 var found = BauImporter.FindByPrefix(FilePrefix, includeImported: false, s);
                 if (found.Count > 1) found = found.GetRange(0, 1); // 念のため最新1つに絞る（FindByPrefix は新しい順）
                 if (found.Count == 0) { Log("このプロジェクトに未取り込みの新しい版はありません。"); return; }
@@ -84,7 +95,7 @@ namespace Kyogetsukan.MochiApude
         {
             var s = BauSettings.Load();
             var removed = BauImporter.KeepOnlyLatest(FilePrefix, s);
-            foreach (var name in removed) Log("古い版を削除: " + name);
+            foreach (var name in removed) Log("古い版を old へ退避: " + name);
             var found = BauImporter.FindByPrefix(FilePrefix, includeImported: true, s);
             if (found.Count > 1) found = found.GetRange(0, 1); // 入れ直すのは最新1つだけ
             if (found.Count == 0)
@@ -98,6 +109,19 @@ namespace Kyogetsukan.MochiApude
                 return;
             Log("入れ直し: " + string.Join(", ", found.ConvertAll(f => f.fileName)));
             BauImporter.Reimport(found, s);
+        }
+
+        void ClearOld()
+        {
+            var count = BauImporter.CountOld();
+            if (count == 0) { Log("old フォルダは空です。"); return; }
+            if (!EditorUtility.DisplayDialog("old版をまとめて削除",
+                    "退避しておいた古い版が " + count + " 件あります。\nこれらを完全に削除します。元には戻せません。",
+                    "削除する", "やめる"))
+                return;
+            var removed = BauImporter.ClearOld();
+            foreach (var name in removed) Log("old から削除: " + name);
+            Log("old フォルダを削除: " + removed.Count + " 件");
         }
     }
 }

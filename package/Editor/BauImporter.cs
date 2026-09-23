@@ -56,8 +56,9 @@ namespace Kyogetsukan.MochiApude
         }
 
         /// <summary>
-        /// 保存フォルダにある prefix 始まりの zip/unitypackage のうち、更新日時が最新の1つだけを残し、古い版は削除する。
-        /// 削除したファイルの取り込み済み・見送り記録も消す。戻り値は削除したファイル名。
+        /// 保存フォルダにある prefix 始まりの zip/unitypackage のうち、更新日時が最新の1つだけを残し、古い版は
+        /// 保存フォルダ内の "old" サブフォルダへ退避する（削除はしない）。
+        /// 退避したファイルの取り込み済み・見送り記録も消す。戻り値は退避したファイル名。
         /// 版が並ぶと「両方入れる」ことになりかねないので、常に最新1つに揃える。
         /// </summary>
         public static List<string> KeepOnlyLatest(string prefix, BauSettings s)
@@ -75,22 +76,63 @@ namespace Kyogetsukan.MochiApude
             }
             if (files.Count <= 1) return removed;
             var latest = files.OrderByDescending(f => f.LastWriteTime).First();
+            var oldDir = Path.Combine(DownloadDir, "old");
             foreach (var fi in files)
             {
                 if (fi.FullName == latest.FullName) continue;
                 try
                 {
-                    fi.Delete();
+                    Directory.CreateDirectory(oldDir);
+                    var dest = Path.Combine(oldDir, fi.Name);
+                    if (File.Exists(dest))
+                    {
+                        // 同名の退避済みファイルがあれば、日時を付けて重ならないようにする
+                        var stamped = Path.GetFileNameWithoutExtension(fi.Name)
+                                      + "_" + fi.LastWriteTime.ToString("yyyyMMdd_HHmmss")
+                                      + Path.GetExtension(fi.Name);
+                        dest = Path.Combine(oldDir, stamped);
+                    }
+                    fi.MoveTo(dest);
                     s.imported.RemoveAll(r => r.fileName == fi.Name);
                     s.skipped.Remove(fi.Name);
                     removed.Add(fi.Name);
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning("[もちアプデ] 古い版を消せませんでした: " + fi.Name + " — " + e.Message);
+                    Debug.LogWarning("[もちアプデ] 古い版を old へ退避できませんでした: " + fi.Name + " — " + e.Message);
                 }
             }
             if (removed.Count > 0) s.Save();
+            return removed;
+        }
+
+        /// <summary>保存フォルダ内の "old" サブフォルダにあるファイル数（ボタンの表示・確認ダイアログ用）</summary>
+        public static int CountOld()
+        {
+            var oldDir = Path.Combine(DownloadDir, "old");
+            if (!Directory.Exists(oldDir)) return 0;
+            return Directory.GetFiles(oldDir).Length;
+        }
+
+        /// <summary>"old" サブフォルダの中身をまとめて削除する。戻り値は削除したファイル名。消せなかったものは残る。</summary>
+        public static List<string> ClearOld()
+        {
+            var removed = new List<string>();
+            var oldDir = Path.Combine(DownloadDir, "old");
+            if (!Directory.Exists(oldDir)) return removed;
+            foreach (var p in Directory.GetFiles(oldDir))
+            {
+                var fi = new FileInfo(p);
+                try
+                {
+                    fi.Delete();
+                    removed.Add(fi.Name);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("[もちアプデ] old 内のファイルを消せませんでした: " + fi.Name + " — " + e.Message);
+                }
+            }
             return removed;
         }
 
